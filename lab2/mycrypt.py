@@ -9,6 +9,8 @@ def encode(s):
     if len(s) > 1000:
         raise ValueError
     s = s.ljust(1000, 'a')
+    
+    
     for c in s:
          if c.lower() in ["+", "å", "ä", "ö"]:
             raise ValueError
@@ -22,13 +24,23 @@ def encode(s):
             crypted+=codecs.encode(c,'rot13')
         elif c in digitmapping:
           crypted+=digitmapping[c]
-    return crypted[:origlen]
+          
+          
+          
+    return crypted[:originlen]
 
 def decode(s):
+
+
     originlen = len(s)
     crypted = ""
     digitmapping = dict(zip('!"#€%&/()=1234567890','1234567890!"#€%&/()='))
+    
+    
     s = s.ljust(1000, 'a')
+    
+    
+    
     for c in s:
         if c.isalpha():
             if c.islower():
@@ -40,4 +52,4 @@ def decode(s):
         elif c in digitmapping:
           crypted+=digitmapping[c]
 
-    return crypted[:origlen]
+    return crypted[:originlen]

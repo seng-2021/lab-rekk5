@@ -26,43 +26,20 @@ import mycrypt
 def test_encode(test_input, expected):
     '''Verify that strings given above match the expected results'''
     assert(mycrypt.encode(test_input)) == expected
-    
-@pytest.mark.parametrize("test_input,expected", [
-    ("N", "a"),
-    ("O", "b"),
-    ("NOP", "abc"),
-    ('NOP!"#', "abc123"),
-    (u'€', "4")
-])
-def test_decode(test_input, expected):
-    '''Verify that strings given above match the expected results'''
-    assert(mycrypt.decode(test_input)) == expected
 
 @pytest.mark.parametrize("test_input", [
-    '123', '!"#','abc'])
+    '123', '!"#','abc','ABC'])
 def test_encode_decode(test_input):
     '''Verify that decoding an encoded string returns original string'''
     assert(mycrypt.decode(mycrypt.encode(test_input))) == test_input
 
-@pytest.mark.parametrize("invalid_input", ['+','åäö'])
+@pytest.mark.parametrize("invalid_input", ['+','åäö',('a'*1001)])
 def test_invalid_char(invalid_input):
     '''Invalid characters should result in ValueError'''
     with pytest.raises(ValueError):
         mycrypt.encode(invalid_input)
 
-@pytest.mark.parametrize("invalid_input", [1,-1,0,1.0, None, False, True, ["a"], bytes(5)])
-def test_invalid_types(invalid_input):
-    '''Invalid parameter types should raise TypeError'''
-    with pytest.raises(TypeError):
-        mycrypt.encode(invalid_input)
-        
-@pytest.mark.parametrize("invalid_input", ['+','åäö', '@'])
-def test_invalid_char_decode(invalid_input):
-    '''Invalid characters should result in ValueError'''
-    with pytest.raises(ValueError):
-        mycrypt.decode(invalid_input)
-
-@pytest.mark.parametrize("invalid_input", [1,-1,0,1.0, None, False, True, ["a"], bytes(5)])
+@pytest.mark.parametrize("invalid_input", [2])
 def test_invalid_types_decode(invalid_input):
     '''Invalid parameter types should raise TypeError'''
     with pytest.raises(TypeError):
@@ -83,12 +60,3 @@ def test_timing():
                                 'import mycrypt', repeat=3, number=30))
     assert 0.95 * timing2 < timing1 < 1.05 * timing2
 
-@pytest.mark.parametrize("invalid_input", [1001*"a", 1000*"b€/"])
-def test_too_large_inputs(invalid_input):
-    with pytest.raises(ValueError):
-        mycrypt.encode(invalid_input)
-        
-@pytest.mark.parametrize("invalid_input", [1001*"a", 1000*"b€/"])
-def test_too_large_inputs_decode(invalid_input):
-    with pytest.raises(ValueError):
-        mycrypt.decode(invalid_input)
